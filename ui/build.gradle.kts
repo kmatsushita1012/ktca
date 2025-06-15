@@ -1,7 +1,8 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.10"
+    `maven-publish`
 }
 
 android {
@@ -51,4 +52,19 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.activity.compose)
+}
+group = "com.github.kmatsushita1012"
+version = "1.0"
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"]) // または "debug" など
+                groupId = "com.github.kmatsushita1012"
+                artifactId = "ktca-ui"
+                version = "1.0"
+            }
+        }
+    }
 }
