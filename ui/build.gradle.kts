@@ -1,7 +1,7 @@
 plugins {
-//    kotlin("jvm") version "2.0.21"
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
 android {
@@ -25,11 +25,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "21"
+    }
+    buildFeatures {
+        compose = true // Composeを有効にする
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "2.0.22"
     }
 }
 
