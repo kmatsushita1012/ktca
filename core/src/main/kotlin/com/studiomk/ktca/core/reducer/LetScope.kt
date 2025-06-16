@@ -4,8 +4,8 @@ import com.studiomk.ktca.core.effect.Effect
 import com.studiomk.ktca.core.scope.Lens
 import com.studiomk.ktca.core.scope.Prism
 
-fun <ParentState, ParentAction, ChildState, ChildAction> OptionalScope(
-    stateLens: Lens<ParentState, ChildState?>,
+fun <ParentState, ParentAction, ChildState, ChildAction> LetScope(
+    stateLens: Lens<ParentState, ChildState>,
     actionPrism: Prism<ParentAction, ChildAction>,
     reducer: ReducerOf<ChildState, ChildAction>
 ): ReducerOf<ParentState, ParentAction> {

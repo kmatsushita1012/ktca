@@ -13,8 +13,9 @@ import kotlinx.coroutines.flow.stateIn
 interface StoreOf<State, Action> {
     val state: StateFlow<State>
     fun send(action: Action)
+
     fun <ChildState, ChildAction>scope(
-        lens: Lens<State, ChildState?>,
+        lens: Lens<State, ChildState>,
         prism: Prism<Action, ChildAction>,
     ): ScopedStore<ChildState, ChildAction>?{
 

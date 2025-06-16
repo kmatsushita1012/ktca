@@ -4,7 +4,7 @@ class Prism<Parent, Child>(
     val extract: (Parent) -> Child?,
     val embed: (Child) -> Parent
 ) {
-    fun <GrandChild> compose(other: Prism<Child, GrandChild>): Prism<Parent, GrandChild> = Prism(
+    operator fun <GrandChild> plus(other: Prism<Child, GrandChild>): Prism<Parent, GrandChild> = Prism(
         extract = { parent ->
             this.extract(parent)?.let { child ->
                 other.extract(child)

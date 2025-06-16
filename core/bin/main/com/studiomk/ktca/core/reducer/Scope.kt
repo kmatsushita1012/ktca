@@ -15,7 +15,7 @@ fun <ParentState, ParentAction, ChildState, ChildAction> Scope(
 
         override fun reduce(parentState: ParentState, parentAction: ParentAction): Pair<ParentState, Effect<ParentAction>> {
             val childAction = actionPrism.extract(parentAction) ?: return parentState to Effect.none()
-            val childState = stateLens.get(parentState)
+            val childState = stateLens.get(parentState)?: return parentState to Effect.none()
 
             val (newChildState, childEffect) = reducer.reduce(childState, childAction)
             val newParentState = stateLens.set(parentState, newChildState)

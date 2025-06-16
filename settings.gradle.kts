@@ -18,6 +18,7 @@ dependencyResolutionManagement {
 
 
 rootProject.name = "ktca"
-include(":ktca")
 include(":core")
 include(":ui")
+include(":processor")
+include(":sample")

@@ -1,7 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.10"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.21"
     `maven-publish`
 }
 
@@ -41,8 +41,7 @@ android {
 }
 
 dependencies {
-
-    implementation(libs.appcompat.v7)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.runtime.android)
     implementation(libs.androidx.animation.core.android)
     implementation(libs.androidx.foundation.layout.android)

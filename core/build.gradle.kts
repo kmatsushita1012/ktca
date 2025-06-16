@@ -1,10 +1,10 @@
-repositories {
-    mavenCentral()
-}
-
 plugins {
     kotlin("jvm") version "2.0.21"
     `maven-publish`
+}
+
+repositories {
+    mavenCentral()
 }
 
 kotlin {
