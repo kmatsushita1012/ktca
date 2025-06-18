@@ -15,7 +15,7 @@ interface StoreOf<State, Action> {
     fun send(action: Action)
 
     fun <ChildState, ChildAction>scope(
-        lens: Lens<State, ChildState>,
+        lens: Lens<State, ChildState?>,
         prism: Prism<Action, ChildAction>,
     ): ScopedStore<ChildState, ChildAction>?{
 
