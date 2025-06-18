@@ -31,8 +31,8 @@ class DestinationProcessor(
                 writer.write("package $packageName\n\n")
                 writer.write("import com.studiomk.ktca.core.reducer.ReducerOf\n")
                 writer.write("import com.studiomk.ktca.core.effect.Effect\n")
-                writer.write("import com.studiomk.ktca.core.scope.Lens\n")
-                writer.write("import com.studiomk.ktca.core.scope.Prism\n")
+                writer.write("import com.studiomk.ktca.core.scope.OptionalKeyPath\n")
+                writer.write("import com.studiomk.ktca.core.scope.CasePath\n")
                 writer.write("\n")
 
                 //State
@@ -119,19 +119,19 @@ class DestinationProcessor(
                     // Lens 拡張プロパティ
                     writer.write("""
                         |
-                        |val $nestedDestinationName.lens: Lens<${destinationName}State, $reducerName.State?> 
-                        |    get() = Lens(
+                        |val $nestedDestinationName.key: OptionalKeyPath<${destinationName}State, $reducerName.State> 
+                        |    get() = OptionalKeyPath(
                         |        get = { state -> (state as? ${destinationName}State.$name)?.state },
-                        |        set = { state, child ->
-                        |            if (child == null) state
-                        |            else (state as? ${destinationName}State.$name)?.copy(state = child) ?: state
+                        |        set = { state, child -> 
+                        |           if (child == null) state
+                        |           else (state as? DestinationState.Counter1)?.copy(state = child) ?: state
                         |        }
                         |    )
                         |
-                        |val ${nestedDestinationName}.prism: Prism<${destinationName}Action, $reducerName.Action>
-                        |    get() = Prism(
+                        |val ${nestedDestinationName}.case: CasePath<${destinationName}Action, $reducerName.Action>
+                        |    get() = CasePath(
                         |        extract = { action -> (action as? ${destinationName}Action.$name)?.action },
-                        |        embed = { child -> ${destinationName}Action.$name(child) }
+                        |        inject = { child -> ${destinationName}Action.$name(child) }
                         |    )
                         |
                     """.trimMargin())

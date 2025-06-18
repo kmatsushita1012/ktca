@@ -1,7 +1,8 @@
 package com.studiomk.ktca.core.store
 
-import com.studiomk.ktca.core.scope.Lens
-import com.studiomk.ktca.core.scope.Prism
+import com.studiomk.ktca.core.scope.KeyPath
+import com.studiomk.ktca.core.scope.OptionalKeyPath
+import com.studiomk.ktca.core.scope.CasePath
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,15 +16,13 @@ interface StoreOf<State, Action> {
     fun send(action: Action)
 
     fun <ChildState, ChildAction>scope(
-        lens: Lens<State, ChildState?>,
-        prism: Prism<Action, ChildAction>,
-    ): ScopedStore<ChildState, ChildAction>?{
-
+        keyPath: OptionalKeyPath<State, ChildState>,
+        casePath: CasePath<Action, ChildAction>,
+    ): ScopedStore<ChildState,ChildAction>?{
         val current = state.value
-        val childState = lens.get(current) ?: return null
-
+        val childState = keyPath.get(current) ?: return null
         val childStateFlow = state
-            .mapNotNull { lens.get(it) }
+            .mapNotNull { keyPath.get(it) }
             .distinctUntilChanged()
             .stateIn(
                 CoroutineScope(Dispatchers.Main),
@@ -33,7 +32,31 @@ interface StoreOf<State, Action> {
         return ScopedStore<ChildState, ChildAction>(
             state = childStateFlow,
             sendAction = { childAction ->
-                this.send(prism.embed(childAction))
+                this.send(casePath.inject(childAction))
+            }
+        )
+    }
+
+    fun <ChildState, ChildAction>scope(
+        keyPath: KeyPath<State, ChildState>,
+        casePath: CasePath<Action, ChildAction>,
+    ): ScopedStore<ChildState, ChildAction>?{
+
+        val current = state.value
+        val childState = keyPath.get(current) ?: return null
+
+        val childStateFlow = state
+            .mapNotNull { keyPath.get(it) }
+            .distinctUntilChanged()
+            .stateIn(
+                CoroutineScope(Dispatchers.Main),
+                SharingStarted.Eagerly,
+                initialValue = childState
+            )
+        return ScopedStore<ChildState, ChildAction>(
+            state = childStateFlow,
+            sendAction = { childAction ->
+                this.send(casePath.inject(childAction))
             }
         )
     }

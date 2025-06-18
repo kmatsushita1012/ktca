@@ -4,17 +4,10 @@ import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.*
 import com.studiomk.ktca.core.annotation.FeatureOf
 import java.io.OutputStreamWriter
-import com.studiomk.ktca.core.annotation.Prism
-import com.studiomk.ktca.core.annotation.Lens
+import com.studiomk.ktca.core.annotation.Cased
+import com.studiomk.ktca.core.annotation.Keyed
 
-fun KSDeclaration.getScopedTypeName(): String {
-    val parent = this.parentDeclaration
-    return if (parent is KSClassDeclaration) {
-        "${parent.simpleName.asString()}.${this.simpleName.asString()}"
-    } else {
-        this.simpleName.asString() // fallback
-    }
-}
+
 
 class ScopeProcessor(
     private val codeGenerator: CodeGenerator,
@@ -24,24 +17,13 @@ class ScopeProcessor(
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val toReprocess = mutableListOf<KSAnnotated>()
 
-        val featureOfSymbols = resolver.getSymbolsWithAnnotation(FeatureOf::class.qualifiedName!!)
-            .filterIsInstance<KSClassDeclaration>()
-            .toList()
-        logger.warn("isNotEmpty ${featureOfSymbols.isNotEmpty()}")
-        val lensAnnotations = resolver.getSymbolsWithAnnotation(Lens::class.qualifiedName!!).filterIsInstance<KSPropertyDeclaration>()
-        val prismAnnotations = resolver.getSymbolsWithAnnotation(Prism::class.qualifiedName!!).filterIsInstance<KSClassDeclaration>()
-        if (featureOfSymbols.isNotEmpty()) {
-            // @FeatureOf がまだあれば Lens と Prism のシンボルを再処理リストに追加して待つ
-            logger.warn("lensAnnotations ${lensAnnotations.toList()}")
-            logger.warn("prismAnnotations ${prismAnnotations.toList()}")
-            return (lensAnnotations + prismAnnotations).toList().filterIsInstance<KSAnnotated>()
-        }
-        logger.warn("lensAnnotations ${lensAnnotations.toList()}")
-        logger.warn("prismAnnotations ${prismAnnotations.toList()}")
-        val lensProps = lensAnnotations
+        val lensProps = resolver.getSymbolsWithAnnotation(Keyed::class.qualifiedName!!)
+            .filterIsInstance<KSPropertyDeclaration>()
             .groupBy { it.parentDeclaration?.parentDeclaration as? KSClassDeclaration }
             .filterKeys { it != null }
-        val prismActions = prismAnnotations
+
+        val prismActions = resolver.getSymbolsWithAnnotation(Cased::class.qualifiedName!!)
+            .filterIsInstance<KSClassDeclaration>()
             .groupBy { it.parentDeclaration?.parentDeclaration as? KSClassDeclaration }
             .filterKeys { it != null }
 
@@ -57,8 +39,9 @@ class ScopeProcessor(
 
             OutputStreamWriter(file, Charsets.UTF_8).use { writer ->
                 writer.write("package $packageName\n\n")
-                writer.write("import com.studiomk.ktca.core.scope.Lens\n")
-                writer.write("import com.studiomk.ktca.core.scope.Prism\n")
+                writer.write("import com.studiomk.ktca.core.scope.KeyPath\n")
+                writer.write("import com.studiomk.ktca.core.scope.OptionalKeyPath\n")
+                writer.write("import com.studiomk.ktca.core.scope.CasePath\n")
                 writer.write("\n")
 
                 // Collect imports for Lens props
@@ -89,29 +72,38 @@ class ScopeProcessor(
                     val propName = prop.simpleName.asString()
                     val resolved = prop.type.resolve()
                     val typeName: String
-                    val isNullable: Boolean
-//                    logger.error("resolved ${resolved}")
-                    if (resolved.isError) {
-                        isNullable = false
-                        typeName = prop.type.resolve().toString()
-                            .removePrefix("<ERROR TYPE: ")
-                            .removeSuffix(">")
-                    } else {
-                        isNullable = resolved.nullability == Nullability.NULLABLE
-                        logger.warn("dec ${resolved.declaration as? KSClassDeclaration}")
+                    if (!resolved.isError&& resolved.isMarkedNullable) {
                         val typeDecl = resolved.declaration as? KSClassDeclaration ?: continue
                         typeName = typeDecl.getScopedTypeName()
+                        writer.write(
+                            """
+                            val $featureName.${propName}Key: KeyPath<${featureName}.State, $typeName>
+                                get() = KeyPath(
+                                    get = { it.$propName },
+                                    set = { parent, child -> parent.copy($propName = child) }
+                                )
+                        """.trimIndent()
+                        )
+                    } else {
+                        if(resolved.isError){
+                            typeName = prop.type.resolve().toString()
+                                .removePrefix("<ERROR TYPE: ")
+                                .removeSuffix(">")
+                        } else {
+                            val typeDecl = resolved.declaration as? KSClassDeclaration ?: continue
+                            typeName = typeDecl.getScopedTypeName()
+                        }
+                        writer.write(
+                            """
+                            val $featureName.${propName}Key: OptionalKeyPath<${featureName}.State, $typeName>
+                                get() = OptionalKeyPath(
+                                    get = { it.$propName },
+                                    set = { parent, child -> parent.copy($propName = child) }
+                                )
+                        """.trimIndent())
                     }
-                    writer.write("""
-                        val $featureName.${propName}Lens: Lens<${featureName}.State, $typeName${if (isNullable) "?" else ""}>
-                            get() = Lens(
-                                get = { it.$propName },
-                                set = { parent, child -> parent.copy($propName = child) }
-                            )
-                            
-                    """.trimIndent())
                 }
-
+                writer.write("\n")
                 // Prism 拡張関数
                 for (actionClass in prismGroup) {
                     val name = actionClass.simpleName.asString()
@@ -124,17 +116,25 @@ class ScopeProcessor(
                         .removeSuffix(">")
 
                     writer.write("""
-                        val $featureName.${fieldName}Prism: Prism<${featureName}.Action, $guessedName>
-                            get() = Prism(
+                        val $featureName.${fieldName}Case: CasePath<${featureName}.Action, $guessedName>
+                            get() = CasePath(
                                 extract = { (it as? ${featureName}.Action.$name)?.action },
-                                embed = { ${featureName}.Action.$name(it) }
+                                inject = { ${featureName}.Action.$name(it) }
                             )
-                            
                     """.trimIndent())
                 }
             }
         }
         logger.warn("toReporocess end ${toReprocess}")
         return toReprocess
+    }
+
+    fun KSDeclaration.getScopedTypeName(): String {
+        val parent = this.parentDeclaration
+        return if (parent is KSClassDeclaration) {
+            "${parent.simpleName.asString()}.${this.simpleName.asString()}"
+        } else {
+            this.simpleName.asString() // fallback
+        }
     }
 }

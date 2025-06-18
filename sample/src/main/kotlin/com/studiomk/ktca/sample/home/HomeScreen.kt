@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
@@ -47,8 +46,8 @@ fun HomeScreen(
 
     FullScreenNavigation(
         item = store.scope(
-            lens = Home.destinationLens + Home.Destination.Counter1.lens,
-            prism = Home.destinationPrism + Home.Destination.Counter1.prism
+            keyPath = Home.destinationKey + Home.Destination.Counter1.key,
+            prism = Home.destinationCase + Home.Destination.Counter1.case
         )
     ) {
         CounterScreen(it)
@@ -56,8 +55,8 @@ fun HomeScreen(
 
     FullScreenNavigation(
         item = store.scope(
-            lens = Home.destinationLens + Home.Destination.Counter2.lens,
-            prism = Home.destinationPrism + Home.Destination.Counter2.prism
+            keyPath = Home.destinationKey + Home.Destination.Counter2.key,
+            prism = Home.destinationCase + Home.Destination.Counter2.case
         )
     ) {
         CounterScreen(it)
