@@ -89,33 +89,35 @@ class ScopeProcessor(
                             typeName = typeDecl.getScopedTypeName()
                         }
                         writer.write(
-                            """
-                            val $featureName.${propName}Key: OptionalKeyPath<${featureName}.State, $typeName>
-                                get() = OptionalKeyPath(
-                                    get = { it.$propName },
-                                    set = { parent, child -> parent.copy($propName = child) }
-                                )
+                        """
+                        val $featureName.${propName}Key: OptionalKeyPath<${featureName}.State, $typeName>
+                            get() = OptionalKeyPath(
+                                get = { it.$propName },
+                                set = { parent, child -> parent.copy($propName = child) }
+                            )
+                        
                         """.trimIndent())
                     }
                 }
-                writer.write("\n")
                 // Prism 拡張関数
                 for (actionClass in prismGroup) {
                     val name = actionClass.simpleName.asString()
                     val fieldName = name.replaceFirstChar(Char::lowercaseChar)
                     val actionProperty = actionClass.getAllProperties()
                         .firstOrNull { it.simpleName.asString() == "action" } ?: continue
-
+                    logger.error(actionProperty.type.resolve().toString())
                     val guessedName = actionProperty.type.resolve().toString()
                         .removePrefix("<ERROR TYPE: ")
                         .removeSuffix(">")
 
-                    writer.write("""
-                        val $featureName.${fieldName}Case: CasePath<${featureName}.Action, $guessedName>
-                            get() = CasePath(
-                                extract = { (it as? ${featureName}.Action.$name)?.action },
-                                inject = { ${featureName}.Action.$name(it) }
-                            )
+                    writer.write(
+                    """
+                    val $featureName.${fieldName}Case: CasePath<${featureName}.Action, $guessedName>
+                        get() = CasePath(
+                            extract = { (it as? ${featureName}.Action.$name)?.action },
+                            inject = { ${featureName}.Action.$name(it) }
+                        )
+                         
                     """.trimIndent())
                 }
             }

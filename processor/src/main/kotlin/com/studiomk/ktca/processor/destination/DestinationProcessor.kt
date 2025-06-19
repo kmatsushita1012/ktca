@@ -123,7 +123,7 @@ class DestinationProcessor(
                         |        get = { state -> (state as? ${destinationName}State.$name)?.state },
                         |        set = { state, child -> 
                         |           if (child == null) state
-                        |           else (state as? DestinationState.Counter1)?.copy(state = child) ?: state
+                        |           else (state as? ${destinationName}State.$name)?.copy(state = child) ?: state
                         |        }
                         |    )
                         |
