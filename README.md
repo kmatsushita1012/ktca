@@ -1,6 +1,7 @@
 # Kotlin TCA Library Documentation
 
 ---
+
 **⚠️ This library is under active development and is not yet stable. APIs and behaviors may change without notice. Use at your own risk, and please check for updates before upgrading.**
 
 ---
@@ -12,32 +13,38 @@ It enables state management, side effects, scoped reducers, and seamless integra
 
 ---
 
-## Installation
+## 📦 Installation via JitPack
 
-You can use [JitPack](https://jitpack.io/#kmatsushita1012/ktca) to add this library to your project.
+This library is distributed via [JitPack](https://jitpack.io).
 
-Add the following to your `build.gradle`:
+```kotlin
+// settings.gradle.kts or build.gradle.kts
 
-```gradle
-allprojects {
+dependencyResolutionManagement {
     repositories {
-        maven { url 'https://jitpack.io' }
+        maven("https://jitpack.io")
+        // other repositories like mavenCentral(), google(), etc.
     }
 }
 ```
 
-Then add the dependency (replace `<version>` with the latest release):
+```kotlin
+// build.gradle.kts
 
-```gradle
-dependencies {
-    implementation 'com.github.kmatsushita1012:ktca:<version>'
-}
+// Core functionality
+implementation("com.github.kmatsushita1012.ktca:core:0.1.1")
+
+// UI components (Jetpack Compose)
+implementation("com.github.kmatsushita1012.ktca:ktca-ui:0.1.1")
+
+// Annotation processor or code generation support
+implementation("com.github.kmatsushita1012.ktca:processor:0.1.1")
+
+// ⚠️ This will NOT work (does not include all modules):
+// implementation("com.github.kmatsushita1012.ktca:0.1.1")
 ```
 
-For details and the latest version, see:  
-https://jitpack.io/#kmatsushita1012/ktca
-
----
+We plan to support a single umbrella artifact (`ktca`) that includes all modules in the future.
 
 ## Basic Structure
 
