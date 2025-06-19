@@ -60,62 +60,7 @@ object Home : ReducerOf<Home.State, Home.Action> {
 
                         else -> state to Effect.none()
                     }
-//                    when (val action = action.action) {
-//                        is DestinationAction.Counter1 -> {
-//                            when(val action = action.action){
-//                                is Counter.Action.DismissTapped->{
-//                                    state.copy(destination = null) to Effect.none()
-//                                }
-//                                else -> state to Effect.none()
-//                            }
-//                        }
-//                        is DestinationAction.Counter2 -> {
-//                            when(val action = action.action){
-//                                is Counter.Action.DismissTapped->{
-//                                    state.copy(destination = null) to Effect.none()
-//                                }
-//                                else -> state to Effect.none()
-//                            }
-//                        }
-//                    }
                 }
             }
         }
 }
-//
-//object Home : ReducerOf<Home.State, Home.Action> {
-//
-//    data class State(
-//        val title: String = "Home",
-//        @Lens val counter: Counter.State? = null,
-//    )
-//
-//    sealed class Action {
-//        data class SetTitle(val title: String) : Action()
-//        class CounterButtonTapped() : Action()
-//        @Prism class Counter(val action: Counter.Action) : Action()
-//    }
-//
-//    override fun body(): ReducerOf<State, Action> =
-//        LetScope(
-//            stateLens = counterLens,
-//            actionPrism = counterPrism,
-//            reducer = Counter
-//        ) +
-//        Reduce<State, Action>{ state, action ->
-//            when (action) {
-//                is Action.SetTitle -> state.copy(title = action.title) to Effect.none()
-//                is Action.CounterButtonTapped->{
-//                    counterLens.set(state, Counter.State(count = 0)) to Effect.none()
-//                }
-//                is Action.Counter -> {
-//                    when (val action = action.action) {
-//                        is Counter.Action.DismissTapped -> {
-//                            state.copy(counter = null) to Effect.none()
-//                        }
-//                        else -> state to Effect.none()
-//                    }
-//                }
-//            }
-//        }
-//}

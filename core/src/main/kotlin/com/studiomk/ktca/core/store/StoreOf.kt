@@ -15,7 +15,7 @@ interface StoreOf<State, Action> {
     val state: StateFlow<State>
     fun send(action: Action)
 
-    fun <ChildState, ChildAction>scope(
+    fun <ChildState, ChildAction> optionalScope(
         keyPath: OptionalKeyPath<State, ChildState>,
         casePath: CasePath<Action, ChildAction>,
     ): ScopedStore<ChildState,ChildAction>?{

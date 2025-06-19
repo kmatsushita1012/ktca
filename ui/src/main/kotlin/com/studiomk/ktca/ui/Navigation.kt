@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -99,7 +100,7 @@ fun <T> NavigationSheet(
     val screenHeightPx = with(LocalDensity.current) { configuration.screenHeightDp.dp.toPx() }
     val scope = rememberCoroutineScope()
 
-    var currentHeightPx by remember { mutableStateOf(screenHeightPx * initialSnap) }
+    var currentHeightPx by remember { mutableFloatStateOf(screenHeightPx * initialSnap) }
 
     // ドラッグ状態
     val dragState = rememberDraggableState { delta ->

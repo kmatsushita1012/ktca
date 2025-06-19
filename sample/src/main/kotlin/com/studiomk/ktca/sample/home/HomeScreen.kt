@@ -43,56 +43,21 @@ fun HomeScreen(
             }
         }
     }
-
     FullScreenNavigation(
-        item = store.scope(
+        item = store.optionalScope(
             keyPath = Home.destinationKey + Home.Destination.Counter1.key,
-            prism = Home.destinationCase + Home.Destination.Counter1.case
+            casePath = Home.destinationCase + Home.Destination.Counter1.case
         )
     ) {
         CounterScreen(it)
     }
 
     FullScreenNavigation(
-        item = store.scope(
+        item = store.optionalScope(
             keyPath = Home.destinationKey + Home.Destination.Counter2.key,
-            prism = Home.destinationCase + Home.Destination.Counter2.case
+            casePath = Home.destinationCase + Home.Destination.Counter2.case
         )
     ) {
         CounterScreen(it)
     }
 }
-
-//
-//@Composable
-//fun HomeScreen(
-//    store: StoreOf<Home.State, Home.Action>
-//) {
-//    val state by store.state.collectAsState()
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .statusBarsPadding()
-//    ) {
-//        Text(text = state.title)
-//
-//        Spacer(modifier = Modifier.height(16.dp))
-//
-//        Row {
-//            Button(onClick = { store.send(Home.Action.CounterButtonTapped()) }) {
-//                Text("Counter 1")
-//            }
-//            Spacer(modifier = Modifier.width(8.dp))
-//        }
-//    }
-//
-//
-//    FullScreenNavigation(
-//        item = store.scope(
-//            lens = Home.counterLens,
-//            prism = Home.counterPrism
-//        )
-//    ) {store ->
-//        CounterScreen(store)
-//    }
-//}
