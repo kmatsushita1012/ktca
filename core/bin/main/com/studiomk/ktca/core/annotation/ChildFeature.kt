@@ -4,4 +4,4 @@ import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
-annotation class FeatureOf(val reducer: KClass<*>)
+annotation class ChildFeature(val reducer: KClass<*>)

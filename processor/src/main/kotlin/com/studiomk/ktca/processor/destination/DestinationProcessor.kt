@@ -3,14 +3,14 @@ package com.studiomk.ktca.processor.destination
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.*
 import java.io.OutputStreamWriter
-import com.studiomk.ktca.core.annotation.FeatureOf
+import com.studiomk.ktca.core.annotation.ChildFeature
 
 class DestinationProcessor(
     private val codeGenerator: CodeGenerator,
     private val logger: KSPLogger
 ) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val symbols = resolver.getSymbolsWithAnnotation(FeatureOf::class.qualifiedName!!)
+        val symbols = resolver.getSymbolsWithAnnotation(ChildFeature::class.qualifiedName!!)
             .filterIsInstance<KSClassDeclaration>()
 
         val groupedByParent = symbols.groupBy { it.parentDeclaration as? KSClassDeclaration }
@@ -41,7 +41,7 @@ class DestinationProcessor(
                     val name = case.simpleName.asString()
 
                     val annotation = case.annotations
-                        .first { it.shortName.asString() == "FeatureOf" }
+                        .first { it.shortName.asString() == "ChildFeature" }
                     val reducerClass = annotation.arguments.first().value as KSType
                     val reducerName = reducerClass.declaration.qualifiedName!!.asString()
 
@@ -54,7 +54,7 @@ class DestinationProcessor(
                 for (case in cases) {
                     val name = case.simpleName.asString()
                     val annotation = case.annotations
-                        .first { it.shortName.asString() == "FeatureOf" }
+                        .first { it.shortName.asString() == "ChildFeature" }
 
                     val reducerClass = annotation.arguments.first().value as KSType
                     val reducerName = reducerClass.declaration.qualifiedName!!.asString()
@@ -69,7 +69,7 @@ class DestinationProcessor(
                 // Reducer fields
                 for (case in cases) {
                     val name = case.simpleName.asString()
-                    val annotation = case.annotations.first { it.shortName.asString() == "FeatureOf" }
+                    val annotation = case.annotations.first { it.shortName.asString() == "ChildFeature" }
                     val reducerClass = annotation.arguments.first().value as KSType
                     val reducerName = reducerClass.declaration.qualifiedName!!.asString()
                     writer.write("    private val ${name.replaceFirstChar(Char::lowercaseChar)} = $reducerName\n")
@@ -84,7 +84,7 @@ class DestinationProcessor(
                 for (case in cases) {
                     val name = case.simpleName.asString()
                     val param = name.replaceFirstChar(Char::lowercaseChar)
-                    val annotation = case.annotations.first { it.shortName.asString() == "FeatureOf" }
+                    val annotation = case.annotations.first { it.shortName.asString() == "ChildFeature" }
                     val reducerClass = annotation.arguments.first().value as KSType
                     val reducerName = reducerClass.declaration.qualifiedName!!.asString()
 
@@ -104,7 +104,7 @@ class DestinationProcessor(
                 // Lens/Prism
                 for (case in cases) {
                     val name = case.simpleName.asString()
-                    val annotation = case.annotations.first { it.shortName.asString() == "FeatureOf" }
+                    val annotation = case.annotations.first { it.shortName.asString() == "ChildFeature" }
                     val reducerClass = annotation.arguments.first().value as KSType
                     val reducerName = reducerClass.declaration.qualifiedName!!.asString()
 

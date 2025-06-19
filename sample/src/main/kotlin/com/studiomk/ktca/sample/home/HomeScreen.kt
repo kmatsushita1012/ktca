@@ -45,8 +45,8 @@ fun HomeScreen(
     }
     FullScreenNavigation(
         item = store.optionalScope(
-            keyPath = Home.destinationKey + Home.Destination.Counter1.key,
-            casePath = Home.destinationCase + Home.Destination.Counter1.case
+            statePath = Home.destinationKey + Home.Destination.Counter1.key,
+            actionPath = Home.destinationCase + Home.Destination.Counter1.case
         )
     ) {
         CounterScreen(it)
@@ -54,8 +54,8 @@ fun HomeScreen(
 
     FullScreenNavigation(
         item = store.optionalScope(
-            keyPath = Home.destinationKey + Home.Destination.Counter2.key,
-            casePath = Home.destinationCase + Home.Destination.Counter2.case
+            statePath = Home.destinationKey + Home.Destination.Counter2.key,
+            actionPath = Home.destinationCase + Home.Destination.Counter2.case
         )
     ) {
         CounterScreen(it)

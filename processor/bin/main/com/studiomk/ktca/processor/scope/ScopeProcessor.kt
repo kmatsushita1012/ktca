@@ -2,10 +2,9 @@ package com.studiomk.ktca.processor.scope
 
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.*
-import com.studiomk.ktca.core.annotation.FeatureOf
 import java.io.OutputStreamWriter
-import com.studiomk.ktca.core.annotation.Cased
-import com.studiomk.ktca.core.annotation.Keyed
+import com.studiomk.ktca.core.annotation.ChildAction
+import com.studiomk.ktca.core.annotation.ChildState
 
 
 
@@ -17,12 +16,12 @@ class ScopeProcessor(
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val toReprocess = mutableListOf<KSAnnotated>()
 
-        val lensProps = resolver.getSymbolsWithAnnotation(Keyed::class.qualifiedName!!)
+        val lensProps = resolver.getSymbolsWithAnnotation(ChildState::class.qualifiedName!!)
             .filterIsInstance<KSPropertyDeclaration>()
             .groupBy { it.parentDeclaration?.parentDeclaration as? KSClassDeclaration }
             .filterKeys { it != null }
 
-        val prismActions = resolver.getSymbolsWithAnnotation(Cased::class.qualifiedName!!)
+        val prismActions = resolver.getSymbolsWithAnnotation(ChildAction::class.qualifiedName!!)
             .filterIsInstance<KSClassDeclaration>()
             .groupBy { it.parentDeclaration?.parentDeclaration as? KSClassDeclaration }
             .filterKeys { it != null }

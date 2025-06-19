@@ -6,20 +6,20 @@ import com.studiomk.ktca.core.scope.CasePath
 
 
 fun <ParentState, ParentAction, ChildState, ChildAction> Scope(
-    keyPath: KeyPath<ParentState, ChildState>,
-    casePath: CasePath<ParentAction, ChildAction>,
+    statePath: KeyPath<ParentState, ChildState>,
+    actionPath: CasePath<ParentAction, ChildAction>,
     reducer: ReducerOf<ChildState, ChildAction>
 ): ReducerOf<ParentState, ParentAction> {
     return object : ReducerOf<ParentState, ParentAction> {
         override fun body() = this
 
         override fun reduce(parentState: ParentState, parentAction: ParentAction): Pair<ParentState, Effect<ParentAction>> {
-            val childAction = casePath.extract(parentAction) ?: return parentState to Effect.none()
-            val childState = keyPath.get(parentState)?: return parentState to Effect.none()
+            val childAction = actionPath.extract(parentAction) ?: return parentState to Effect.none()
+            val childState = statePath.get(parentState)?: return parentState to Effect.none()
 
             val (newChildState, childEffect) = reducer.reduce(childState, childAction)
-            val newParentState = keyPath.set(parentState, newChildState)
-            val newParentEffect = childEffect.map { casePath.inject(it) }
+            val newParentState = statePath.set(parentState, newChildState)
+            val newParentEffect = childEffect.map { actionPath.inject(it) }
 
             return newParentState to newParentEffect
         }

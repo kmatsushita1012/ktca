@@ -16,13 +16,13 @@ interface StoreOf<State, Action> {
     fun send(action: Action)
 
     fun <ChildState, ChildAction> optionalScope(
-        keyPath: OptionalKeyPath<State, ChildState>,
-        casePath: CasePath<Action, ChildAction>,
+        statePath: OptionalKeyPath<State, ChildState>,
+        actionPath: CasePath<Action, ChildAction>,
     ): ScopedStore<ChildState,ChildAction>?{
         val current = state.value
-        val childState = keyPath.get(current) ?: return null
+        val childState = statePath.get(current) ?: return null
         val childStateFlow = state
-            .mapNotNull { keyPath.get(it) }
+            .mapNotNull { statePath.get(it) }
             .distinctUntilChanged()
             .stateIn(
                 CoroutineScope(Dispatchers.Main),
@@ -32,7 +32,7 @@ interface StoreOf<State, Action> {
         return ScopedStore<ChildState, ChildAction>(
             state = childStateFlow,
             sendAction = { childAction ->
-                this.send(casePath.inject(childAction))
+                this.send(actionPath.inject(childAction))
             }
         )
     }

@@ -1,9 +1,8 @@
 package com.studiomk.ktca.sample.home
 
-import com.studiomk.ktca.core.annotation.Cased
-import com.studiomk.ktca.core.annotation.FeatureOf
-import com.studiomk.ktca.core.annotation.Keyed
-import com.studiomk.ktca.core.annotation.OptionalKeyed
+import com.studiomk.ktca.core.annotation.ChildAction
+import com.studiomk.ktca.core.annotation.ChildFeature
+import com.studiomk.ktca.core.annotation.ChildState
 import com.studiomk.ktca.core.effect.Effect
 import com.studiomk.ktca.core.reducer.LetScope
 import com.studiomk.ktca.core.reducer.Reduce
@@ -14,29 +13,29 @@ import com.studiomk.ktca.sample.counter.Counter
 object Home : ReducerOf<Home.State, Home.Action> {
 
     sealed class Destination {
-        @FeatureOf(Counter::class)
+        @ChildFeature(Counter::class)
         object Counter1 : Destination()
 
-        @FeatureOf(Counter::class)
+        @ChildFeature(Counter::class)
         object Counter2 : Destination()
     }
 
     data class State(
         val title: String = "Home",
-        @Keyed val destination: DestinationState? = null,
+        @ChildState val destination: DestinationState? = null,
     )
 
     sealed class Action {
         data class SetTitle(val title: String) : Action()
         class CounterButton1Tapped() : Action()
         class CounterButton2Tapped() : Action()
-        @Cased class Destination(val action: DestinationAction) : Action()
+        @ChildAction class Destination(val action: DestinationAction) : Action()
     }
 
     override fun body(): ReducerOf<State, Action> =
         LetScope(
-            keyPath = destinationKey,
-            casePath = destinationCase,
+            statePath = destinationKey,
+            actionPath = destinationCase,
             reducer = DestinationReducer
         ) +
         Reduce<State, Action>{ state, action ->
