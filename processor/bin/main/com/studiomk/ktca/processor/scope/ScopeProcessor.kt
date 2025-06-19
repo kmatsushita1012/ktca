@@ -105,7 +105,7 @@ class ScopeProcessor(
                     val fieldName = name.replaceFirstChar(Char::lowercaseChar)
                     val actionProperty = actionClass.getAllProperties()
                         .firstOrNull { it.simpleName.asString() == "action" } ?: continue
-                    logger.error(actionProperty.type.resolve().toString())
+                    logger.warn(actionProperty.type.resolve().toString())
                     val guessedName = actionProperty.type.resolve().toString()
                         .removePrefix("<ERROR TYPE: ")
                         .removeSuffix(">")
