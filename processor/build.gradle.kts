@@ -21,7 +21,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             groupId = group.toString()
-            artifactId = "ktca-core"
+            artifactId = "ktca-processor"
             version = version.toString()
         }
     }
@@ -30,7 +30,7 @@ publishing {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(libs.symbol.processing.api)
-    implementation(project(":core"))
+    implementation(project(":processor"))
 }
 
 // KSPプロセッサのエントリーポイントを登録するための設定（META-INF/servicesなど）は手動で準備するか、Gradleタスクで生成
