@@ -30,7 +30,7 @@ publishing {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(libs.symbol.processing.api)
-    implementation(project(":processor"))
+    implementation(project(":core"))
 }
 
 // KSPプロセッサのエントリーポイントを登録するための設定（META-INF/servicesなど）は手動で準備するか、Gradleタスクで生成
