@@ -47,13 +47,9 @@ class ScopeProcessor(
                 // Collect imports for Lens props
                 val lensGroup = lensProps[featureDecl] ?: emptyList()
                 val prismGroup = prismActions[featureDecl] ?: emptyList()
-                logger.warn(featureDecl.toString())
-                logger.warn(prismGroup.toString())
-
                 val importSet = mutableSetOf<String>()
                 // Lens の importを集める
                 for (prop in lensGroup) {
-                    logger.warn("import ${ prop.type.resolve().declaration as? KSClassDeclaration}")
                     val typeDecl = prop.type.resolve().declaration as? KSClassDeclaration ?: continue
                     if (typeDecl.qualifiedName == null) {
                         // まだ型解決できていないのでこのシンボルは再処理待ちに回す
@@ -72,7 +68,7 @@ class ScopeProcessor(
                     val propName = prop.simpleName.asString()
                     val resolved = prop.type.resolve()
                     val typeName: String
-                    if (!resolved.isError&& resolved.isMarkedNullable) {
+                    if (!resolved.isError&& !resolved.isMarkedNullable) {
                         val typeDecl = resolved.declaration as? KSClassDeclaration ?: continue
                         typeName = typeDecl.getScopedTypeName()
                         writer.write(
@@ -125,7 +121,6 @@ class ScopeProcessor(
                 }
             }
         }
-        logger.warn("toReporocess end ${toReprocess}")
         return toReprocess
     }
 

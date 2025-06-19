@@ -35,8 +35,8 @@ object Home : ReducerOf<Home.State, Home.Action> {
 
     override fun body(): ReducerOf<State, Action> =
         LetScope(
-            stateKeyPath = destinationKey,
-            actionPrism = destinationCase,
+            keyPath = destinationKey,
+            casePath = destinationCase,
             reducer = DestinationReducer
         ) +
         Reduce<State, Action>{ state, action ->

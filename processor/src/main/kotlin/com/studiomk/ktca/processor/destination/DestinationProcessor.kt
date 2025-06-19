@@ -104,7 +104,6 @@ class DestinationProcessor(
                 // Lens/Prism
                 for (case in cases) {
                     val name = case.simpleName.asString()
-                    val lowerName = name.replaceFirstChar(Char::lowercaseChar)
                     val annotation = case.annotations.first { it.shortName.asString() == "FeatureOf" }
                     val reducerClass = annotation.arguments.first().value as KSType
                     val reducerName = reducerClass.declaration.qualifiedName!!.asString()
