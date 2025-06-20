@@ -105,14 +105,20 @@ class ScopeProcessor(
                     val fieldName = name.replaceFirstChar(Char::lowercaseChar)
                     val actionProperty = actionClass.getAllProperties()
                         .firstOrNull { it.simpleName.asString() == "action" } ?: continue
-                    logger.warn(actionProperty.type.resolve().toString())
-                    val guessedName = actionProperty.type.resolve().toString()
-                        .removePrefix("<ERROR TYPE: ")
-                        .removeSuffix(">")
+                    val resolved = actionProperty.type.resolve()
+                    val typeName: String
+                    if (!resolved.isError) {
+                        val typeDecl = resolved.declaration as? KSClassDeclaration ?: continue
+                        typeName = typeDecl.getScopedTypeName()
+                    } else {
+                        typeName =resolved.toString()
+                            .removePrefix("<ERROR TYPE: ")
+                            .removeSuffix(">")
+                    }
 
                     writer.write(
                     """
-                    val $featureName.${fieldName}Case: CasePath<${featureName}.Action, $guessedName>
+                    val $featureName.${fieldName}Case: CasePath<${featureName}.Action, $typeName>
                         get() = CasePath(
                             extract = { (it as? ${featureName}.Action.$name)?.action },
                             inject = { ${featureName}.Action.$name(it) }
