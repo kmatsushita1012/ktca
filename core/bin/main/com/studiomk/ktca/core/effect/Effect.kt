@@ -12,21 +12,29 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.coroutineScope
 
 class Effect<A> private constructor(
-    private val flow: Flow<A>
+    internal val flow: Flow<A>,
+    internal val jobKey: String? = null,
+    internal val children: List<Effect<A>> = emptyList()
 ) {
 
     // map は Swift の map と同じく Effect を変換する
     fun <B> map(transform: (A) -> B): Effect<B> =
-        Effect(flow.map(transform))
+        Effect(flow.map(transform), jobKey)
 
     suspend fun collect(collector: suspend (A) -> Unit) = flow.collect(collector)
 
     companion object {
         fun <A> none(): Effect<A> = Effect(emptyFlow())
         fun <A> just(value: A): Effect<A> = Effect(flowOf(value))
-        fun <A> merge(vararg effects: Effect<A>): Effect<A> =
-            Effect(merge(*effects.map { it.flow }.toTypedArray()))
+        fun <A> merge(vararg effects: Effect<A>): Effect<A> {
+            return Effect(
+                flow = merge(*effects.map { it.flow }.toTypedArray()),
+                jobKey = null,
+                children = effects.toList()
+            )
+        }
         fun <A> run(
+            id: String? = null,
             dispatcher: CoroutineDispatcher = Dispatchers.Default,
             block: suspend (suspend (A) -> Unit) -> Unit
         ): Effect<A> {
@@ -35,7 +43,9 @@ class Effect<A> private constructor(
                     block { action -> emit(action) }
                 }
             }.flowOn(dispatcher)
-            return Effect(flow)
+            return Effect(flow, id)
         }
+
+        fun <A> cancel(id: String): Effect<A> = Effect(emptyFlow(), id)
     }
 }

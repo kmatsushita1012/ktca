@@ -12,7 +12,8 @@ android {
     defaultConfig {
         minSdk = 24
 
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        // androidxのテストランナーに変更
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -33,7 +34,7 @@ android {
         jvmTarget = "21"
     }
     buildFeatures {
-        compose = true // Composeを有効にする
+        compose = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "2.0.22"
@@ -41,17 +42,23 @@ android {
 }
 
 dependencies {
+    // Compose BOMを使ってCompose関連のバージョン管理を一元化
+    implementation(platform(libs.androidx.compose.bom))
+
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.runtime.android)
     implementation(libs.androidx.animation.core.android)
-    implementation(libs.androidx.foundation.layout.android)
-    implementation(libs.androidx.foundation.android)
+    implementation(libs.androidx.foundation)
+    implementation(libs.androidx.foundation.layout)  // foundation-layoutの正しい依存名
+
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.activity.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.runner)
     androidTestImplementation(libs.espresso.core)
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.activity.compose)
 }
+
 group = "com.github.kmatsushita1012"
 version = "1.0"
 
@@ -59,7 +66,7 @@ afterEvaluate {
     publishing {
         publications {
             create<MavenPublication>("release") {
-                from(components["release"]) // または "debug" など
+                from(components["release"])
                 groupId = "com.github.kmatsushita1012"
                 artifactId = "ktca-ui"
                 version = "1.0"

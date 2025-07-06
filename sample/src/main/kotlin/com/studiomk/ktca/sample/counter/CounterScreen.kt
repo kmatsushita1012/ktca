@@ -1,5 +1,6 @@
 package com.studiomk.ktca.sample.counter
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.studiomk.ktca.core.store.StoreOf
@@ -29,13 +29,18 @@ fun CounterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = { store.send(Counter.Action.DecrementTapped) }) {
                 Text("-")
             }
-            Spacer(modifier = Modifier.width(8.dp))
             Button(onClick = { store.send(Counter.Action.IncrementTapped) }) {
                 Text("+")
+            }
+            Button(onClick = { store.send(Counter.Action.TimerTapped) }) {
+                Text("Start Timer")
+            }
+            Button(onClick = { store.send(Counter.Action.CancelTapped) }) {
+                Text("Stop Timer")
             }
         }
 
