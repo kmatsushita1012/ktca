@@ -87,7 +87,7 @@ fun <T> FullScreenNavigation(
 }
 
 @Composable
-fun <T> NavigationSheet(
+fun <T> SheetNavigation(
     item: T?,
     initialSnap: Float = 0.6f, // 0..1 の割合で初期高さ
     snapPoints: List<Float> = (6..20).map { it * 0.05f },
