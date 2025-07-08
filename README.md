@@ -15,7 +15,7 @@ It enables state management, side effects, scoped reducers, and seamless integra
 
 ## 📦 Installation via JitPack
 
-This library is distributed via [JitPack](https://jitpack.io).
+This library is distributed via [JitPack](https://jitpack.io/#kmatsushita1012/ktca).
 
 ```kotlin
 // settings.gradle.kts or build.gradle.kts
