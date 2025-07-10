@@ -12,12 +12,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.studiomk.ktca.core.store.StoreOf
+import com.studiomk.ktca.core.util.Binding
 import com.studiomk.ktca.sample.counter.CounterScreen
-import com.studiomk.ktca.ui.FullScreenNavigation
-import com.studiomk.ktca.ui.SheetNavigation
+import com.studiomk.ktca.ui.FullScreen
+import com.studiomk.ktca.ui.Sheet
 
 
 @Composable
@@ -42,9 +44,15 @@ fun HomeScreen(
             Button(onClick = { store.send(Home.Action.CounterButton2Tapped()) }) {
                 Text("Counter 2")
             }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = { store.send(Home.Action.SheetSet(true)) }
+            ) {
+                Text("Boolean Presentation")
+            }
         }
     }
-    FullScreenNavigation(
+    FullScreen(
         item = store.optionalScope(
             statePath = Home.destinationKey + Home.Destination.Counter1.key,
             actionPath = Home.destinationCase + Home.Destination.Counter1.case
@@ -53,12 +61,29 @@ fun HomeScreen(
         CounterScreen(it)
     }
 
-    SheetNavigation(
+    Sheet(
         item = store.optionalScope(
             statePath = Home.destinationKey + Home.Destination.Counter2.key,
             actionPath = Home.destinationCase + Home.Destination.Counter2.case
         )
     ) {
         CounterScreen(it)
+    }
+    FullScreen(
+        isPresented = Binding<Boolean>(
+            getter = { state.isSheetPresented  },
+            setter = { it -> store.send(Home.Action.SheetSet(it))}
+        )
+    ) { it ->
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = { it.value = false }
+            ) {
+                Text("Hide ")
+            }
+        }
     }
 }

@@ -40,7 +40,6 @@ android {
         kotlinCompilerExtensionVersion = "2.0.22"
     }
 }
-
 dependencies {
     // Compose BOMを使ってCompose関連のバージョン管理を一元化
     implementation(platform(libs.androidx.compose.bom))
@@ -57,6 +56,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.runner)
     androidTestImplementation(libs.espresso.core)
+    implementation(project(":core"))
 }
 
 group = "com.github.kmatsushita1012"

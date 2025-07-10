@@ -22,6 +22,7 @@ object Home : ReducerOf<Home.State, Home.Action> {
 
     data class State(
         val title: String = "Home",
+        var isSheetPresented: Boolean = false,
         @ChildState val destination: DestinationState? = null,
     )
 
@@ -29,6 +30,7 @@ object Home : ReducerOf<Home.State, Home.Action> {
         data class SetTitle(val title: String) : Action()
         class CounterButton1Tapped() : Action()
         class CounterButton2Tapped() : Action()
+        data class SheetSet(val value: Boolean): Action()
         @ChildAction class Destination(val action: DestinationAction) : Action()
     }
 
@@ -46,6 +48,11 @@ object Home : ReducerOf<Home.State, Home.Action> {
                 }
                 is Action.CounterButton2Tapped->{
                     destinationKey.set(state, DestinationState.Counter2(state = Counter.State(count = 10))) to Effect.none()
+                }
+                is Action.SheetSet->{
+                    state.copy(
+                        isSheetPresented = action.value
+                    ) to Effect.none()
                 }
                 is Action.Destination -> {
                     when {
