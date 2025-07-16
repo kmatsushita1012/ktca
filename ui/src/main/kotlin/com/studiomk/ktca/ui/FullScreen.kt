@@ -28,30 +28,20 @@ fun <T> FullScreen(
     content: @Composable (T) -> Unit
 ) {
     var visibleItem by remember { mutableStateOf<T?>(null) }
-    var isVisible by remember { mutableStateOf(false) }
 
-    // item が来たとき表示開始
     LaunchedEffect(item) {
         if (item != null) {
             visibleItem = item
-            isVisible = true
         } else if (visibleItem != null) {
-            isVisible = false // 非表示アニメ開始
-        }
-    }
-
-    val transition = updateTransition(isVisible, label = "fullscreen-transition")
-    val alpha by transition.animateFloat(label = "alpha") { shown -> if (shown) 1f else 0f }
-    val offsetY by transition.animateDp(label = "offsetY") { shown -> if (shown) 0.dp else 40.dp }
-
-    // アニメ完了後に完全に消す
-    LaunchedEffect(isVisible) {
-        if (!isVisible && visibleItem != null) {
-            delay(200) // アニメーションに合わせて
+            // item が null になったら非表示 → 消す
+            delay(200)
             visibleItem = null
-            onDismiss?.invoke()
         }
     }
+
+    val transition = updateTransition(targetState = item != null, label = "fullscreen-transition")
+    val alpha by transition.animateFloat(label = "alpha") { if (it) 1f else 0f }
+    val offsetY by transition.animateDp(label = "offsetY") { if (it) 0.dp else 40.dp }
 
     if (visibleItem != null) {
         Box(
@@ -88,7 +78,6 @@ fun FullScreen(
     LaunchedEffect(isPresented.value) {
         if (!isPresented.value) {
             delay(200) // アニメーションに合わせて
-            onDismiss?.invoke()
         }
     }
 

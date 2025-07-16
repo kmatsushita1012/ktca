@@ -2,10 +2,7 @@ package com.studiomk.ktca.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animate
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberDraggableState
@@ -16,10 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -29,9 +24,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import com.studiomk.ktca.core.util.Binding
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
