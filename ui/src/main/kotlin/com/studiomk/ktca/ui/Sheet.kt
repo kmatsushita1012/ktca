@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import com.studiomk.ktca.core.util.Binding
 import kotlinx.coroutines.launch
 
@@ -54,7 +55,7 @@ fun <T> Sheet(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().pointerInput(Unit) {},
         contentAlignment = Alignment.BottomCenter
     ) {
         Box(
@@ -99,6 +100,7 @@ fun Sheet(
     dismissible: Boolean = true,
     content: @Composable (Binding<Boolean>) -> Unit,
 ) {
+
     if (!isPresented.value) return
 
     val configuration = LocalConfiguration.current
@@ -117,7 +119,7 @@ fun Sheet(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().pointerInput(Unit) {},
         contentAlignment = Alignment.BottomCenter
     ) {
         Box(

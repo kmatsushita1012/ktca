@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import com.studiomk.ktca.core.util.Binding
@@ -52,6 +53,7 @@ fun <T> FullScreen(
                     translationY = offsetY.toPx()
                 }
                 .background(Color.White)
+                .pointerInput(Unit) {},
         ) {
             content(visibleItem!!)
 
@@ -90,6 +92,7 @@ fun FullScreen(
                     translationY = offsetY.toPx()
                 }
                 .background(Color.White)
+                .pointerInput(Unit) {}
         ) {
             content(isPresented)
 
